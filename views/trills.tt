@@ -1,18 +1,18 @@
 <% IF user %>
-<div class='trill_me'>
-<form method="POST">
-    <p>Trill me: <input type='text' name='trill' /></p>
-</form>
-</div>
-<p class='trills_for'>Trills for <% user %></span>
+    <div class='trill_me'>
+    <form method="POST">
+        <p>Trill me: <input type='text' name='trill' /></p>
+    </form>
+    </div>
+    <p class='trills_for'>Trills for <% user %></span>
 <% END %>
 
 <ul class="trills">
-<% FOREACH trill IN trills %>
-<li class="trill">
-    <a href="/user/<% trill.user %>">@<% trill.user %></a>
-    <% trill.trill %><br />
-    <span class="time">Trilled at: <% trill.time %></span>
-</li>
-<% END %>
+    <% FOREACH trill IN trills %>
+        <li class="trill">
+            <a href="/<% trill.user %>">@<% trill.user %></a>
+            <% trill.trill %><br />
+            <span class="time">Trilled at: <% trill.time %></span>
+        </li>
+    <% END %>
 </ul>
