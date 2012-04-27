@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head>
+    <title><% title %></title>
+    <style type="text/css">
+        .time  { font-size: smaller; }
+        .trill { background: #afa; }
+        .trill:nth-child(odd) { background: #aaf; }
+    </style>
+</head>
+<body>
+<h1><a href="/">Trillr</a></h1>
+<% content %>
+</body>
+</html>
