@@ -2,6 +2,8 @@ To run, execute:
 
     perl trill.pl
 
+Feel free to send me pull requests if you've got a prettier style-sheet. :)
+
 (C) 2012 Paul Fenwick, Perl Training Australia
 
 Everything here can be used, modified, and distributed under the
