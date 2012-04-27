@@ -8,6 +8,7 @@ set
     database => 'trill',
     show_errors => 1,
     template => 'template_toolkit',
+    layout => 'default',
 ;
 
 
@@ -20,10 +21,32 @@ sub connect_db {
     return $dbh;
 }
 
-get '/' => sub {
+sub get_trills {
+    my ($user) = @_;
+
     my $dbh = connect_db();
-    my $sth = $dbh->prepare('select time,user,trill from trills order by time desc');
-    $sth->execute();
+
+    my $sth;
+
+    if ($user) {
+         $sth = $dbh->prepare(q{
+            SELECT time, user, trill
+            FROM trills
+            WHERE user = ?
+            ORDER BY time DESC
+        });
+
+        $sth->execute($user);
+    }
+    else {
+         $sth = $dbh->prepare(q{
+            SELECT time, user, trill
+            FROM trills
+            ORDER BY time DESC
+        });
+
+        $sth->execute;
+    }
 
     my $trills;
 
@@ -35,35 +58,38 @@ get '/' => sub {
         };
     }
 
+    return $trills;
+
+}
+
+sub insert_trill {
+    my ($name, $trill) = @_;
+    my $dbh = connect_db();
+
+    $dbh->do(
+        'insert into trills (time, user, trill) values (?, ?, ?)', undef,
+        time(), $name, $trill,
+    );
+}
+
+get '/' => sub {
     template 'trills.tt', {
-        trills => $trills
+        trills => get_trills(),
+        title  => 'Trillr',
     };
 };
 
-get '/user/:name' => sub {
+get '/:name' => sub {
     my $name = param('name');
-    my $dbh  = connect_db();
-
-    my $sth = $dbh->prepare('select time,user,trill from trills where user = ? order by time desc');
-    $sth->execute($name);
-
-    my $trills;
-
-    while (my ($time,$user,$trill) = $sth->fetchrow_array) {
-        push @$trills, { 
-            time => scalar localtime($time),
-            user => $user,
-            trill => $trill
-        };
-    }
 
     template 'trills.tt', {
         user   => $name,
-        trills => $trills
+        trills => get_trills($name),
+        title  => "Trills for $name",
     };
 };
 
-post '/user/:name' => sub {
+post '/:name' => sub {
     my $trill = param('trill');
     my $name  = param('name');
 
@@ -75,14 +101,9 @@ post '/user/:name' => sub {
         send_error("Trill too long");
     }
 
-    my $dbh = connect_db();
+    insert_trill($name,$trill);
 
-    $dbh->do(
-        'insert into trills (time, user, trill) values (?, ?, ?)', undef,
-        time(), $name, $trill,
-    );
-
-    return forward "/user/$name", { trilled => 1 }, { method => 'GET' };
+    return forward "/$name", { trilled => 1 }, { method => 'GET' };
 
 };
 
