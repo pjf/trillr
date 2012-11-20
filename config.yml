@@ -1,5 +1,7 @@
 plack_middlewares:
     -
+        - Deflater
+    -
         - Debug
         - panels
         -
