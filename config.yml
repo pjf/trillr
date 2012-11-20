@@ -1,0 +1,13 @@
+plack_middlewares:
+    -
+        - Debug
+        - panels
+        -
+            - Environment
+            - Response
+            - Timer
+            - Memory
+            - DBITrace
+            - Dancer::Version
+            - Dancer::Settings
+            - Dancer::Logger
